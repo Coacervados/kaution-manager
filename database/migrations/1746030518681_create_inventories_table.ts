@@ -16,7 +16,7 @@ export default class extends BaseSchema {
         .onUpdate('CASCADE')
       table
 
-      table.timestamp('created_at').notNullable
+      table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()
     })
   }
