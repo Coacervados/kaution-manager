@@ -1,21 +1,24 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@adonisjs/lucid/orm'
 
-export default class Inventory extends BaseModel {
+export default class Product extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
   @column({ serializeAs: null })
-  declare userId: number
+  declare categoryId: number
+
+  @column({ serializeAs: null })
+  declare name: string
 
   @column({ serializeAs: null })
   declare description: string
 
-  @column()
+  @column({ serializeAs: null })
   declare quantity: number
 
-  @column()
-  declare name: string
+  @column({ serializeAs: null })
+  declare seducCode: number
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
