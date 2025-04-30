@@ -7,12 +7,12 @@ const dbConfig = defineConfig({
     sqlite: {
       client: 'better-sqlite3',
       connection: {
-        filename: app.tmpPath('db.sqlite3')
+        filename: app.tmpPath('db.sqlite3'), // Caminho para o arquivo SQLite
       },
       useNullAsDefault: true,
       migrations: {
         naturalSort: true,
-        paths: ['database/migrations'],
+        paths: ['database/migrations'], // Caminho para as migrações
       },
     },
   },
