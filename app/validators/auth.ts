@@ -2,7 +2,7 @@ import vine from '@vinejs/vine'
 
 export const emailRoule = () => vine.string().maxLength(254).email().normalizeEmail()
 
-export const registerUserValidator = vine.object({
+export const registerUserSchema = vine.object({
     name: vine.string().optional(),
     email: emailRoule().unique({
         table: 'users',
@@ -11,3 +11,5 @@ export const registerUserValidator = vine.object({
     }),
     password: vine.string().minLength(8)
 })
+
+export const registerUserValidator = vine.compile(registerUserSchema);

@@ -1,7 +1,7 @@
 import User from "#models/user";
 
 interface UserInput {
-    name: string;
+    name?: string;
     email: string;
     password: string;
 }
