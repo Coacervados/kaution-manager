@@ -1,4 +1,5 @@
 import User from '#models/user';
+import { inject } from '@adonisjs/core';
 
 interface UserInput {
     name?: string;
@@ -6,26 +7,27 @@ interface UserInput {
     password: string;
 }
 
+@inject()
 export default class UserService {
-  static async create(data: UserInput) {
+  async create(data: UserInput) {
     return User.create(data);
   }
 
-  static async findAll() {
+  async findAll() {
     return User.all();
   }
 
-  static async findById(id: number) {
+  async findById(id: number) {
     return User.find(id);
   }
 
-  static async update(id: number, data: UserInput) {
+  async update(id: number, data: UserInput) {
     const user = await User.find(id);
 
     return user?.merge(data).save();
   }
 
-  static async delete(id: number) {
+  async delete(id: number) {
     const user = await User.find(id);
 
     return user?.delete();

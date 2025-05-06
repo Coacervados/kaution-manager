@@ -1,25 +1,60 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import UserService from '#services/user_service'
 import { registerUserValidator } from '#validators/auth'
+import { inject } from '@adonisjs/core'
 
 export default class UsersController {
-  async create({ request, response }: HttpContext) {
-    const data = await request.validateUsing(registerUserValidator)
-    const user = await UserService.create(data)
-    console.log(user)
-    return response.created(user)
+  @inject()
+  async create({ request, response }: HttpContext, userService: UserService) {
+    try {
+      const data = await request.validateUsing(registerUserValidator)
+      return response.created(userService.create(data))
+    } catch (error) {
+      return response.badRequest(error.messages)
+    }
   }
 
-  async getAll({ response }: HttpContext) {
-    return response.ok(UserService.findAll())
+  @inject()
+  async getAll({ response }: HttpContext, userService: UserService) {
+    try {
+      const users = await userService.findAll()
+      return response.ok(users)
+    } catch (error) {
+      console.error(error)
+      return response.internalServerError({ message: 'Error when searching for users' })
+    }
   }
 
-  async getById({ params, response }: HttpContext) {
-    return response.ok(UserService.findById(params.id))
+  @inject()
+  async getById({ params, response }: HttpContext, userService: UserService) {
+    try {
+      const user = await userService.findById(params.id)
+      if (!user) {
+        return response.notFound({ message: 'User not found' })
+      }
+      return response.ok(user)
+    } catch (error) {
+      console.error(error)
+      return response.internalServerError({ message: 'Error when searching for user' })
+    }
   }
 
-  async update({ params, request, response }: HttpContext) {
-    const data = await request.validateUsing(registerUserValidator)
-    return response.ok(UserService.update(params.id, data))
+  @inject()
+  async update({ params, request, response }: HttpContext, userService: UserService) {
+    try {
+      const data = await request.validateUsing(registerUserValidator)
+      return response.ok(userService.update(params.id, data))
+    } catch (error) {
+      return response.badRequest(error.messages)
+    }
+  }
+
+  @inject()
+  async delete({ params, response }: HttpContext, userService: UserService) {
+    try {
+      return response.ok(userService.delete(params.id))
+    } catch (error) {
+      return response.badRequest(error.messages)
+    }
   }
 }
