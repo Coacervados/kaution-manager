@@ -1,5 +1,4 @@
 import User from '#models/user';
-import { inject } from '@adonisjs/core';
 
 interface UserInput {
     name?: string;
@@ -7,7 +6,6 @@ interface UserInput {
     password: string;
 }
 
-@inject()
 export default class UserService {
   async create(data: UserInput) {
     return User.create(data);
