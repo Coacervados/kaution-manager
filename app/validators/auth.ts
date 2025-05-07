@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import vine from '@vinejs/vine'
 
 export const emailRoule = () => vine.string().maxLength(254).email().normalizeEmail()

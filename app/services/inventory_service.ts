@@ -3,7 +3,7 @@ import Inventory from '#models/inventory'
 import { ConflictError, DatabaseError, NotFoundErr } from '#exceptions/api_error_exception'
 
 interface InventoryInput {
-  name: string;
+  name?: string;
   description?: string;
 }
 

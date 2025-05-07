@@ -3,13 +3,13 @@ import UserService from '#services/user_service'
 import { registerUserValidator } from '#validators/auth'
 import { inject } from '@adonisjs/core'
 import User from '#models/user'
+import authConfig from '#config/auth'
 
 export default class UsersController {
   @inject()
   async create({ request, response }: HttpContext, userService: UserService) {
     const data = await request.validateUsing(registerUserValidator)
     const user = await userService.create(data)
-
     const token = await User.accessTokens.create(user)
 
     return response.created({ user, token })
@@ -44,7 +44,7 @@ export default class UsersController {
   async update({ params, request, response }: HttpContext, userService: UserService) {
     try {
       const data = await request.validateUsing(registerUserValidator)
-      return response.ok( await userService.update(params.id, data))
+      return response.ok(await userService.update(params.id, data))
     } catch (error) {
       return response.badRequest(error.messages)
     }
