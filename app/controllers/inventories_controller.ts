@@ -9,11 +9,30 @@ export default class InventoriesController {
   async create({ request, response, auth }: HttpContext, inventoryService: InventoryService) {
     try{
       const userid = await auth.user?.id
+      if (!userid) {
+        return response.unauthorized({ message: 'User not authenticated' })
+      }
       const data = await request.validateUsing(CreateInventoryValidator)
+      data.userId = userid
       const inventory = await inventoryService.create(data)
       return response.created(inventory)
     } catch (error) {
       return response.badRequest(error.messages)
+    }
+  }
+
+  @inject()
+  async findByUserId({ auth, response }: HttpContext, inventoryService: InventoryService) {
+    try{
+      const userid = await auth.user?.id
+      if (!userid) {
+        return response.unauthorized({ message: 'User not authenticated' })
+      }
+      const inventories = await inventoryService.findByUserId(userid)
+      return response.ok(inventories)
+    } catch (error) {
+      console.error(error)
+      return response.internalServerError({ message: 'Error when searching for inventories by user ID' })
     }
   }
 

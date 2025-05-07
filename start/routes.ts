@@ -10,9 +10,9 @@ router.delete('/users/:id', [UserController, 'delete'])
 
 router.post('/inventories', [InventoriesController, 'create'])
 router.get('/inventories', [InventoriesController, 'getAll'])
+router.get('/inventories/user', [InventoriesController, 'findByUserId'])
 router.get('/inventories/:id', [InventoriesController, 'getById'])
 router.put('/inventories/:id', [InventoriesController, 'update'])
 router.delete('/inventories/:id', [InventoriesController, 'delete'])
-
 
 router.on('/').renderInertia('home')

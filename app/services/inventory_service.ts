@@ -3,6 +3,12 @@ import Inventory from '#models/inventory'
 import { ConflictError, DatabaseError, NotFoundErr } from '#exceptions/api_error_exception'
 
 interface InventoryInput {
+  name: string;
+  description?: string;
+  userId: number
+}
+
+interface InventoryInputUpdate {
   name?: string;
   description?: string;
 }
@@ -57,7 +63,7 @@ export default class InventoryService {
   
 
   
-  async update(id: number, data: InventoryInput): Promise<Inventory> {
+  async update(id: number, data: InventoryInputUpdate): Promise<Inventory> {
     try {
       const inventory = await Inventory.find(id)
       if (!inventory) {
