@@ -10,7 +10,7 @@ export const registerUserSchema = vine.object({
         column: 'email',
         caseInsensitive: true
     }),
-    password: vine.string().minLength(8)
+    password: vine.string().minLength(6)
 })
 
 export const registerUserValidator = vine.compile(registerUserSchema);
