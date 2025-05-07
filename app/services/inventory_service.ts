@@ -1,46 +1,88 @@
-import Inventory from "#models/inventory";
-import { inject } from "@adonisjs/core";
+/* eslint-disable prettier/prettier */
+import Inventory from '#models/inventory'
+import { ConflictError, DatabaseError, NotFoundErr } from '#exceptions/api_error_exception'
 
 interface InventoryInput {
   name: string;
-  description: string;
-  quantity: number;
+  description?: string;
 }
 
-export class InventoryService {
+export default class InventoryService {
 
-  @inject()
-  async create(data: InventoryInput) {
-    return Inventory.create(data);
+  
+  async create(data: InventoryInput): Promise<Inventory> {
+    try {
+      return await Inventory.create(data)
+    } catch (error) {
+      if (error.code === 'ER_DUP_ENTRY') {
+        throw new ConflictError('Inventory already exists')
+      }
+      throw new DatabaseError('Failed to create inventory')
+    }
   }
 
-  @inject()
-  async findAll() {
-    return Inventory.all();
+  
+  async findAll(): Promise<Inventory[]> {
+    try {
+      return await Inventory.all()
+    } catch (error) {
+      if (error instanceof DatabaseError) throw error
+      throw new DatabaseError('Error when fetching inventories')
+    }
   }
 
-  @inject()
-  async findById(id: number) {
-    return Inventory.find(id);
+  
+  async findById(id: number): Promise<Inventory> {
+    try {
+      const inventory = await Inventory.find(id)
+      if (!inventory) {
+        throw new NotFoundErr('Inventory not found')
+      }
+      return inventory
+    } catch (error) {
+      if (error instanceof NotFoundErr) throw error
+      throw new DatabaseError('Error when fetching inventory')
+    }
   }
 
-  @inject()
-  async findByUserId(userId: number) {
-    return Inventory.query().where('user_id', userId);
+  
+  async findByUserId(userId: number): Promise<Inventory[]> {
+    try{
+      return await Inventory.query().where('user_id', userId)
+    } catch (error) {
+      if (error instanceof DatabaseError) throw error
+      throw new DatabaseError('Error when fetching inventories by user ID')
+    }
+  }
+  
+
+  
+  async update(id: number, data: InventoryInput): Promise<Inventory> {
+    try {
+      const inventory = await Inventory.find(id)
+      if (!inventory) {
+        throw new NotFoundErr('Inventory not found')
+      }
+      inventory.merge(data)
+      await inventory.save()
+      return inventory
+    } catch (error) {
+      if (error instanceof NotFoundErr) throw error
+      throw new DatabaseError('Error when updating inventory')
+    }
   }
 
-  @inject()
-  async update(id: number, data: InventoryInput) {
-    const inventory = await Inventory.find(id);
-
-    return inventory?.merge(data).save();
+  
+  async delete(id: number): Promise<void> {
+    try{
+      const inventory = await Inventory.find(id)
+      if (!inventory) {
+        throw new NotFoundErr('Inventory not found')
+      }
+      await inventory.delete()
+    } catch (error) {
+      if (error instanceof NotFoundErr) throw error
+      throw new DatabaseError('Error when deleting inventory')
+    }
   }
-
-  @inject()
-  async delete(id: number) {
-    const inventory = await Inventory.find(id);
-
-    return inventory?.delete();
-  }
-
 }

@@ -9,10 +9,7 @@ export default class Inventory extends BaseModel {
   declare userId: number
 
   @column({ serializeAs: null })
-  declare description: string
-
-  @column()
-  declare quantity: number
+  declare description: string | null
 
   @column()
   declare name: string
