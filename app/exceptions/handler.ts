@@ -1,6 +1,7 @@
 import app from '@adonisjs/core/services/app'
 import { HttpContext, ExceptionHandler } from '@adonisjs/core/http'
 import type { StatusPageRange, StatusPageRenderer } from '@adonisjs/core/types/http'
+import ApiErrorException from './api_error_exception.js'
 
 export default class HttpExceptionHandler extends ExceptionHandler {
   /**
@@ -29,7 +30,13 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * The method is used for handling errors and returning
    * response to the client
    */
-  async handle(error: unknown, ctx: HttpContext) {
+  async handle(error: any, ctx: HttpContext) {
+    if (error instanceof ApiErrorException) {
+      return ctx.response.status(error.status).send({
+        success: false,
+        message: error.message,
+      })
+    }
     return super.handle(error, ctx)
   }
 
