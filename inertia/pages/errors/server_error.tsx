@@ -4,7 +4,7 @@ export default function ServerError(props: { error: any }) {
       <div className="container">
         <div className="title">Server Error</div>
 
-        <span>{props.error.message}</span>
+        <span>{props.error?.message || 'An unexpected error occurred.'}</span> {/* Added fallback */}
       </div>
     </>
   )

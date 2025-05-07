@@ -15,5 +15,5 @@ export default class Notification extends BaseModel {
   declare viewedAt: DateTime
 
   @column({ serializeAs: null })
-  declare viwed: boolean
+  declare viewed: boolean
 }

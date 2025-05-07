@@ -20,7 +20,7 @@ export default class extends BaseSchema {
       table.boolean('viewed').defaultTo(false).nullable()
 
       table.timestamp('send_at').notNullable()
-      table.timestamp('viwed_at').nullable()
+      table.timestamp('viewed_at').nullable()
     })
   }
 

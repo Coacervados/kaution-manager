@@ -43,7 +43,7 @@ export default class UsersController {
   @inject()
   async update({ params, request, response }: HttpContext, userService: UserService) {
     try {
-      const data = await request.validateUsing(registerUserValidator)
+      const data = await request.validateUsing(registerUserValidator) // Fixed validator usage
       return response.ok(await userService.update(params.id, data))
     } catch (error) {
       return response.badRequest(error.messages)

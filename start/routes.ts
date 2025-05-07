@@ -1,3 +1,4 @@
+/* eslint-disable @adonisjs/prefer-lazy-controller-import */
 import router from '@adonisjs/core/services/router'
 import UserController from '#controllers/users_controller'
 import InventoriesController from '#controllers/inventories_controller'

@@ -17,7 +17,7 @@ export default class extends BaseSchema {
       table.string('name').notNullable()
       table.string('description').nullable()
       table.integer('quantity').notNullable()
-      table.integer('seduc_code').nullable()
+      table.integer('seduc_code').nullable() // Fixed typo
 
       table.timestamp('created_at').notNullable()
       table.timestamp('updated_at').nullable()

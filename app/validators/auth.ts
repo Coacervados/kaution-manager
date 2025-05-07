@@ -1,11 +1,11 @@
 /* eslint-disable prettier/prettier */
 import vine from '@vinejs/vine'
 
-export const emailRoule = () => vine.string().maxLength(254).email().normalizeEmail()
+export const emailRule = () => vine.string().maxLength(254).email().normalizeEmail() // Fixed typo
 
 export const registerUserSchema = vine.object({
     name: vine.string().optional(),
-    email: emailRoule().unique({
+    email: emailRule().unique({
         table: 'users',
         column: 'email',
         caseInsensitive: true
