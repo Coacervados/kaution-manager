@@ -7,4 +7,6 @@ router.get('/users/:id', [UserController, 'getById'])
 router.put('/users/:id', [UserController, 'update'])
 router.delete('/users/:id', [UserController, 'delete'])
 
+
+
 router.on('/').renderInertia('home')
