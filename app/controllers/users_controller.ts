@@ -2,13 +2,19 @@ import type { HttpContext } from '@adonisjs/core/http'
 import UserService from '#services/user_service'
 import { registerUserValidator } from '#validators/auth'
 import { inject } from '@adonisjs/core'
+import User from '#models/user'
 
 export default class UsersController {
   @inject()
   async create({ request, response }: HttpContext, userService: UserService) {
     try {
+
       const data = await request.validateUsing(registerUserValidator)
-      return response.created(userService.create(data))
+      const user = await userService.create(data)
+
+      const token = await User.accessTokens.create(user)
+    
+      return response.created({ user, token})
     } catch (error) {
       return response.badRequest(error.messages)
     }
