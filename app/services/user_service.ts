@@ -1,4 +1,5 @@
 import User from '#models/user'
+import { ConflictError, DatabaseError, NotFoundErr } from '#exceptions/api_error_exception'
 
 interface UserInput {
   name?: string
@@ -12,9 +13,9 @@ export default class UserService {
       return await User.create(data)
     } catch (error) {
       if (error.code === 'ER_DUP_ENTRY') {
-        throw new Error('Email already exists')
+        throw new ConflictError('Email already exists')
       }
-      throw new Error('Failed to create user')
+      throw new DatabaseError('Failed to create user')
     }
   }
 
@@ -22,7 +23,7 @@ export default class UserService {
     try {
       return await User.all()
     } catch {
-      throw new Error('Error when fetching users')
+      throw new DatabaseError('Error when fetching users')
     }
   }
 
@@ -30,11 +31,12 @@ export default class UserService {
     try {
       const user = await User.find(id)
       if (!user) {
-        throw new Error('User not found')
+        throw new NotFoundErr('User not found')
       }
       return user
-    } catch {
-      throw new Error('Error when fetching user')
+    } catch (error) {
+      if (error instanceof NotFoundErr) throw error
+      throw new DatabaseError('Error when fetching user')
     }
   }
 
@@ -42,13 +44,14 @@ export default class UserService {
     try {
       const user = await User.find(id)
       if (!user) {
-        throw new Error('User not found')
+        throw new NotFoundErr('User not found')
       }
       user.merge(data)
       await user.save()
       return user
-    } catch {
-      throw new Error('Error when updating user')
+    } catch (error) {
+      if (error instanceof NotFoundErr) throw error
+      throw new DatabaseError('Error when updating user')
     }
   }
 
@@ -56,11 +59,12 @@ export default class UserService {
     try {
       const user = await User.find(id)
       if (!user) {
-        throw new Error('User not found')
+        throw new NotFoundErr('User not found')
       }
       await user.delete()
-    } catch {
-      throw new Error('Error when deleting user')
+    } catch (error) {
+      if (error instanceof NotFoundErr) throw error
+      throw new DatabaseError('Error when deleting user')
     }
   }
 }
