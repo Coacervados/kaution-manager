@@ -7,17 +7,12 @@ import User from '#models/user'
 export default class UsersController {
   @inject()
   async create({ request, response }: HttpContext, userService: UserService) {
-    try {
+    const data = await request.validateUsing(registerUserValidator)
+    const user = await userService.create(data)
 
-      const data = await request.validateUsing(registerUserValidator)
-      const user = await userService.create(data)
+    const token = await User.accessTokens.create(user)
 
-      const token = await User.accessTokens.create(user)
-    
-      return response.created({ user, token})
-    } catch (error) {
-      return response.badRequest(error.messages)
-    }
+    return response.created({ user, token })
   }
 
   @inject()
@@ -49,7 +44,7 @@ export default class UsersController {
   async update({ params, request, response }: HttpContext, userService: UserService) {
     try {
       const data = await request.validateUsing(registerUserValidator)
-      return response.ok(userService.update(params.id, data))
+      return response.ok( await userService.update(params.id, data))
     } catch (error) {
       return response.badRequest(error.messages)
     }
@@ -58,7 +53,7 @@ export default class UsersController {
   @inject()
   async delete({ params, response }: HttpContext, userService: UserService) {
     try {
-      return response.ok(userService.delete(params.id))
+      return response.ok(await userService.delete(params.id))
     } catch (error) {
       return response.badRequest(error.messages)
     }
