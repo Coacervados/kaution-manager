@@ -3,18 +3,32 @@ import UserService from '#services/user_service'
 import { registerUserValidator } from '#validators/auth'
 import { inject } from '@adonisjs/core'
 import User from '#models/user'
-import authConfig from '#config/auth'
 
 export default class UsersController {
   @inject()
-  async create({ request, response }: HttpContext, userService: UserService) {
-    const data = await request.validateUsing(registerUserValidator)
-    const user = await userService.create(data)
-    const token = await User.accessTokens.create(user)
+  async create({ request, response, session }: HttpContext, userService: UserService) {
+    try {
+      const data = await request.validateUsing(registerUserValidator)
+      const user = await userService.create(data)
+      const token =await User.accessTokens.create(user)
 
-    return response.created({ user, token })
+      //modificar quando tiver a view
+      session.flash('success', token)
+
+      return response.ok({
+        redirect: '/users-success',
+        flash: session.flashMessages.all(),
+      })
+    } catch (error) {
+      console.error(error)
+      session.flash('error', 'Erro ao criar usuário!')
+      return response.badRequest({
+        redirect: '/users-error',
+        flash: session.flashMessages.all(),
+      })
+    }
   }
-
+  
   @inject()
   async getAll({ response }: HttpContext, userService: UserService) {
     try {
@@ -43,7 +57,7 @@ export default class UsersController {
   @inject()
   async update({ params, request, response }: HttpContext, userService: UserService) {
     try {
-      const data = await request.validateUsing(registerUserValidator) // Fixed validator usage
+      const data = await request.validateUsing(registerUserValidator)
       return response.ok(await userService.update(params.id, data))
     } catch (error) {
       return response.badRequest(error.messages)
