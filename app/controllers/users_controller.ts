@@ -1,8 +1,10 @@
-import type { HttpContext } from '@adonisjs/core/http'
+import { type HttpContext } from '@adonisjs/core/http'
 import UserService from '#services/user_service'
 import { registerUserValidator } from '#validators/auth'
 import { inject } from '@adonisjs/core'
 import User from '#models/user'
+
+//Alterar as rotas quando tiver a view
 
 export default class UsersController {
   @inject()
@@ -10,66 +12,113 @@ export default class UsersController {
     try {
       const data = await request.validateUsing(registerUserValidator)
       const user = await userService.create(data)
-      const token =await User.accessTokens.create(user)
+      const token = await User.accessTokens.create(user)
 
-      //modificar quando tiver a view
-      session.flash('success', token)
+      session.flash('success', 'User created successfully')
+      //return response.cookie('token', token).redirect('/users/success')
 
       return response.ok({
-        redirect: '/users-success',
-        flash: session.flashMessages.all(),
+        redirect: '/users/success',
+        flash: session.flash('success', 'User created successfully'),
+        token,
       })
     } catch (error) {
-      console.error(error)
-      session.flash('error', 'Erro ao criar usuário!')
+      session.flash('error', 'Error when creating user')
+      console.log(error)
+      //return response.redirect('/users/error')
+
       return response.badRequest({
-        redirect: '/users-error',
-        flash: session.flashMessages.all(),
+        redirect: '/users/error',
+        flash: session.flash('error', 'Error when creating user'),
+        error,
       })
-    }
-  }
-  
-  @inject()
-  async getAll({ response }: HttpContext, userService: UserService) {
-    try {
-      const users = await userService.findAll()
-      return response.ok(users)
-    } catch (error) {
-      console.error(error)
-      return response.internalServerError({ message: 'Error when searching for users' })
     }
   }
 
   @inject()
-  async getById({ params, response }: HttpContext, userService: UserService) {
+  async getAll({ response, session }: HttpContext, userService: UserService) {
+    try {
+      const users = await userService.findAll()
+
+      //return response.cookie('users', users).redirect('/users-all')
+
+      return response.ok({
+        redirect: '/users-all',
+        flash: session.flash('sucess', users),
+        users,
+      })
+    } catch (error) {
+      session.flash('error', 'Error when searching for users')
+      //return response.redirect('/users-error')
+      return response.internalServerError({
+        redirect: '/users-error',
+        flash: session.flash('error', 'Error when searching for users'),
+        error,
+      })
+    }
+  }
+
+  @inject()
+  async getById({ params, response, session }: HttpContext, userService: UserService) {
     try {
       const user = await userService.findById(params.id)
       if (!user) {
-        return response.notFound({ message: 'User not found' })
+        return response.notFound({
+          redirect: '/users-error',
+          flash: session.flash('error', 'User not found'),
+        })
       }
-      return response.ok(user)
+      return response.ok({
+        redirect: '/users',
+        flash: session.flash('sucess', user),
+        user,
+      })
     } catch (error) {
       console.error(error)
-      return response.internalServerError({ message: 'Error when searching for user' })
+      return response.internalServerError({
+        redirect: '/users-error',
+        flash: session.flash('error', 'Error when searching for user'),
+        error,
+      })
     }
   }
 
   @inject()
-  async update({ params, request, response }: HttpContext, userService: UserService) {
+  async update({ params, request, response, session }: HttpContext, userService: UserService) {
     try {
       const data = await request.validateUsing(registerUserValidator)
-      return response.ok(await userService.update(params.id, data))
+      const user = await userService.update(params.id, data)
+
+      return response.ok({
+        redirect: '/users',
+        flash: session.flash('sucess', user),
+        user,
+      })
     } catch (error) {
-      return response.badRequest(error.messages)
+      return response.badRequest({
+        redirect: '/users-error',
+        flash: session.flash('error', 'Error when updating user'),
+        error,
+      })
     }
   }
 
   @inject()
-  async delete({ params, response }: HttpContext, userService: UserService) {
+  async delete({ params, response, session }: HttpContext, userService: UserService) {
     try {
-      return response.ok(await userService.delete(params.id))
+      const user = await userService.delete(params.id)
+
+      return response.ok({
+        redirect: '/users',
+        flash: session.flash('sucess', 'User deleted successfully'),
+        user,
+      })
     } catch (error) {
-      return response.badRequest(error.messages)
+      return response.badRequest({
+        redirect: '/users-error',
+        flash: session.flash('error', 'Error when deleting user'),
+        error,
+      })
     }
   }
 }
