@@ -10,7 +10,7 @@ export default class UsersController {
     try {
       const data = await request.validateUsing(registerUserValidator)
       const user = await userService.create(data)
-      const token =await User.accessTokens.create(user)
+      const token = await User.accessTokens.create(user)
 
       //modificar quando tiver a view
       session.flash('success', token)
@@ -28,7 +28,7 @@ export default class UsersController {
       })
     }
   }
-  
+
   @inject()
   async getAll({ response }: HttpContext, userService: UserService) {
     try {
@@ -41,7 +41,7 @@ export default class UsersController {
   }
 
   @inject()
-  async getById({ params, response }: HttpContext, userService: UserService) {
+  async getById({ params, response, auth }: HttpContext, userService: UserService) {
     try {
       const user = await userService.findById(params.id)
       if (!user) {

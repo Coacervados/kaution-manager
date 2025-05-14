@@ -5,7 +5,7 @@ import InventoriesController from '#controllers/inventories_controller'
 
 router.post('/users', [UserController, 'create'])
 router.get('/users', [UserController, 'getAll'])
-router.get('/users/:id', [UserController, 'getById'])
+router.get('/users/token', [UserController, 'getById'])
 router.put('/users/:id', [UserController, 'update'])
 router.delete('/users/:id', [UserController, 'delete'])
 
@@ -15,5 +15,9 @@ router.get('/inventories/user', [InventoriesController, 'findByUserId'])
 router.get('/inventories/:id', [InventoriesController, 'getById'])
 router.put('/inventories/:id', [InventoriesController, 'update'])
 router.delete('/inventories/:id', [InventoriesController, 'delete'])
+
+router.get('/login', async ({ view }) => {
+  return view.render('login')
+})
 
 router.on('/').renderInertia('home')
