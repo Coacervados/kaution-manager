@@ -1,71 +1,83 @@
-import Category from '#models/category'
-import {
-  ConflictError,
-  DatabaseError,
-  NotFoundErr,
-} from '#exceptions/api_error_exception'
-
-interface CategoryInput {
-  name: string
-  description: string
-  inventoryId: number
-}
+import { type HttpContext } from '@adonisjs/core/http'
+import { inject } from '@adonisjs/core'
+import CategoriesService from '#services/category_service'
+import { createCategoryValidator, updateCategoryValidator } from '#validators/category'
 
 export default class CategoriesController {
-  async create(CategoryInput: CategoryInput) {
-    try {
-      return await Category.create(CategoryInput)
-    } catch (error) {
-      if (error.code === 'ER_DUP_ENTRY') {
-        throw new ConflictError('Email already exists')
-      }
-      throw new DatabaseError('Error when creating category')
-    }
+  @inject()
+  async index({ response, view, session }: HttpContext, categoriesService: CategoriesService) {
+    const categories = await categoriesService.findAll()
+
+    session.flash('sucess', categories)
+
+    return response.ok({
+      redirect: 'categories/index',
+      flash: session.flash('sucess', categories),
+      categories,
+    })
+    //return view.render('categories/index', { categories })
   }
 
-  async index(): Promise<Category[]> {
-    try {
-      return await Category.all()
-    } catch (error) {
-      if (error instanceof DatabaseError) throw error
-      throw new DatabaseError('Error when fetching categories')
+  @inject()
+  async show(
+    { params, response, view, session }: HttpContext,
+    categoriesService: CategoriesService
+  ) {
+    const category = await categoriesService.findById(params.id)
+
+    if (!category) {
+      return response.notFound({
+        redirect: 'categories/error',
+        flash: session.flash('error', 'Category not found'),
+      })
     }
+
+    session.flash('sucess', category)
+
+    return response.ok({
+      redirect: 'categories/show',
+      flash: session.flash('sucess', category),
+      category,
+    })
+
+    //return view.render('categories/show', { category })
   }
 
-  async show(id: number): Promise<Category | null> {
+  @inject()
+  async create(
+    { view, response, request, session }: HttpContext,
+    categoriesService: CategoriesService
+  ) {
     try {
-      return await Category.find(id)
+      const data = await request.validateUsing(createCategoryValidator)
+      await categoriesService.create(data)
+      return response.redirect('/categories')
     } catch (error) {
-      if (error instanceof NotFoundErr) throw error
-      throw new DatabaseError('Error when fetching category')
+      return response.badRequest({
+        redirect: '/categories',
+        flash: session.flash('error', 'Error when creating category'),
+        error,
+      })
     }
+
+    //return view.render('categories/create')
   }
 
-  async update(id: number, data: CategoryInput): Promise<Category> {
+  @inject()
+  async update(
+    { view, params, response, request, session }: HttpContext,
+    categoriesService: CategoriesService
+  ) {
     try {
-      const category = await Category.find(id)
-      if (!category) {
-        throw new NotFoundErr('Category not found')
-      }
-      category.merge(data)
-      await category.save()
-      return category
+      const data = await request.validateUsing(updateCategoryValidator)
+      await categoriesService.update(params.id, data)
     } catch (error) {
-      if (error instanceof NotFoundErr) throw error
-      throw new DatabaseError('Error when updating category')
+      return response.badRequest({
+        redirect: '/categories',
+        flash: session.flash('error', error),
+      })
     }
-  }
 
-  async destroy(id: number): Promise<void> {
-    try {
-      const category = await Category.find(id)
-      if (!category) {
-        throw new NotFoundErr('Category not found')
-      }
-      await category.delete()
-    } catch (error) {
-      if (error instanceof NotFoundErr) throw error
-      throw new DatabaseError('Error when deleting category')
-    }
+    //return view.render('categories/update')
   }
 }

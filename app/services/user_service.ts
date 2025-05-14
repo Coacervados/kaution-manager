@@ -1,5 +1,6 @@
 import User from '#models/user'
 import { ConflictError, DatabaseError, NotFoundErr } from '#exceptions/api_error_exception'
+import { inject } from '@adonisjs/core'
 
 interface UserInput {
   name?: string
@@ -8,6 +9,7 @@ interface UserInput {
 }
 
 export default class UserService {
+  @inject()
   async create(data: UserInput): Promise<User> {
     try {
       return await User.create(data)
@@ -19,6 +21,7 @@ export default class UserService {
     }
   }
 
+  @inject()
   async findAll(): Promise<User[]> {
     try {
       return await User.all()
@@ -27,6 +30,7 @@ export default class UserService {
     }
   }
 
+  @inject()
   async findById(id: number): Promise<User> {
     try {
       const user = await User.find(id)
@@ -40,6 +44,7 @@ export default class UserService {
     }
   }
 
+  @inject()
   async update(id: number, data: UserInput): Promise<User> {
     try {
       const user = await User.find(id)
@@ -55,6 +60,7 @@ export default class UserService {
     }
   }
 
+  @inject()
   async delete(id: number): Promise<void> {
     try {
       const user = await User.find(id)
