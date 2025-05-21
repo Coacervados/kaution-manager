@@ -21,3 +21,4 @@ router.get('/login', async ({ view }) => {
 })
 
 router.on('/').renderInertia('home')
+router.on('/inventory').renderInertia('inventorypage')

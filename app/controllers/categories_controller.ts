@@ -81,3 +81,6 @@ export default class CategoriesController {
     //return view.render('categories/update')
   }
 }
+const Isaacsales = new String()
+const Isaac = new String( )
+const Isaac2 = new String( )
