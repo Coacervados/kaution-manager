@@ -5,16 +5,19 @@ export default class Product extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
-  @column()
+  @column({ serializeAs: null })
+  declare categoryId: number
+
+  @column({ serializeAs: null })
   declare name: string
 
-  @column()
+  @column({ serializeAs: null })
   declare description: string
 
-  @column()
+  @column({ serializeAs: null })
   declare quantity: number
 
-  @column()
+  @column({ serializeAs: null })
   declare SEDUCcode: number
 
   @column.dateTime({ autoCreate: true })
