@@ -8,10 +8,10 @@ export default class Inventory extends BaseModel {
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
-  @column()
+  @column({ serializeAs: null })
   declare name: string
 
-  @column()
+  @column({ serializeAs: null })
   declare description: string
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
