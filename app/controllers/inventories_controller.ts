@@ -35,10 +35,10 @@ export default class InventoriesController {
    * @param {HttpContext['request']} context.request
    * @returns {Promise<void>}
    */
-  async store({ view, request }: HttpContext) {
+  async store({ inertia, request }: HttpContext) {
     const data = request.validateUsing(InventoryValidator)
     await Inventory.create(data as Partial<Inventory>)
-    return view.render('inventories/index')
+    return inertia.render('inventories/index')
   }
 
   /**
