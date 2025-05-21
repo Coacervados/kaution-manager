@@ -5,6 +5,12 @@ export default class Category extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
+  @column({ serializeAs: null })
+  declare name: string
+
+  @column({ serializeAs: null })
+  declare description: string
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
