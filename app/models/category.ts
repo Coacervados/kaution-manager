@@ -11,6 +11,9 @@ export default class Category extends BaseModel {
   @column({ serializeAs: null })
   declare description: string
 
+  @column({ serializeAs: null })
+  declare inventoryId: number
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
