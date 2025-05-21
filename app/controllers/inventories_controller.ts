@@ -10,9 +10,9 @@ export default class InventoriesController {
    * @param {View} context.view
    * @returns {Promise<void>}
    */
-  async index({ view }: HttpContext) {
+  async index({ inertia }: HttpContext) {
     const inventories = await Inventory.all()
-    return view.render('inventories/index', { inventories })
+    return inertia.render('inventories/index', { inventories })
   }
 
   /**
@@ -23,8 +23,8 @@ export default class InventoriesController {
    * @returns {Promise<void>}
    */
 
-  async create({ view }: HttpContext) {
-    return view.render('inventories/create')
+  async create({ inertia }: HttpContext) {
+    return inertia.render('inventories/create')
   }
 
   /**
@@ -48,8 +48,8 @@ export default class InventoriesController {
    * @param {View} context.view
    * @returns {Promise<void>}
    */
-  async edit({ view }: HttpContext) {
-    return view.render('inventories/edit')
+  async edit({ inertia }: HttpContext) {
+    return inertia.render('inventories/edit')
   }
 
   /**
@@ -60,11 +60,11 @@ export default class InventoriesController {
    * @param {HttpContext['request']} context.request
    * @returns {Promise<void>}
    */
-  async update({ view, request }: HttpContext) {
+  async update({ inertia, request }: HttpContext) {
     const data = request.validateUsing(InventoryUpdateValidator)
     const inventory = await Inventory.findOrFail(request.param('id'))
     await inventory.merge(data as Partial<Inventory>).save()
-    return view.render('inventories/index')
+    return inertia.render('inventories/index')
   }
 
   async destroy({}) {}
