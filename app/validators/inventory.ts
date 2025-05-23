@@ -9,7 +9,7 @@ export const InventoryValidator = vine.compile(
 
 export const InventoryUpdateValidator = vine.compile(
   vine.object({
-    name: vine.string().maxLength(255),
-    description: vine.string().maxLength(50),
+    name: vine.string().maxLength(255).optional(),
+    description: vine.string().maxLength(50).optional(),
   })
 )
