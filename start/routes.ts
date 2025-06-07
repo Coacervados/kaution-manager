@@ -10,7 +10,7 @@
 import router from '@adonisjs/core/services/router'
 const InventoriesController = () => import('#controllers/inventories_controller')
 
-router.on('/').render('home')
+router.on('/').renderInertia('home')
 
 router.get('/inventories', [InventoriesController, 'index'])
 router.get('/inventories/:id', 'InventoriesController.show')

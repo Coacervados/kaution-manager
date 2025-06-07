@@ -1,22 +1,22 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import Inventory from '#models/inventory'
-import { InventoryValidator, InventoryUpdateValidator } from '#validators/inventory'
+import Product from '#models/product'
+import { ProductValidator, ProductUpdateValidator } from '#validators/product'
 
-export default class InventoriesController {
+export default class ProductsController {
   /**
-   * List all inventories.
+   * List all products.
    *
    * @param {HttpContext} context
    * @param {View} context.view
    * @returns {Promise<void>}
    */
   async index({ inertia }: HttpContext) {
-    const inventories = await Inventory.all()
-    return inertia.render('inventories/index', { inventories })
+    const products = await Product.all()
+    return inertia.render('product/index', { products })
   }
 
   /**
-   * Render the view to create a new inventory.
+   * Render the view to create a new product.
    *
    * @param {HttpContext} context
    * @param {View} context.view
@@ -24,11 +24,11 @@ export default class InventoriesController {
    */
 
   async create({ inertia }: HttpContext) {
-    return inertia.render('inventories/create')
+    return inertia.render('product/create')
   }
 
   /**
-   * Persist a new inventory into the database.
+   * Persist a new product into the database.
    *
    * @param {HttpContext} context
    * @param {HttpContext['view']} context.view
@@ -36,24 +36,24 @@ export default class InventoriesController {
    * @returns {Promise<void>}
    */
   async store({ inertia, request }: HttpContext) {
-    const data = request.validateUsing(InventoryValidator)
-    await Inventory.create(data as Partial<Inventory>)
-    return inertia.render('inventories/index')
+    const data = request.validateUsing(ProductValidator)
+    await Product.create(data as Partial<Product>)
+    return inertia.render('products/index')
   }
 
   /**
-   * Render the view to edit an existing inventory.
+   * Render the view to edit an existing product.
    *
    * @param {HttpContext} context
    * @param {View} context.view
    * @returns {Promise<void>}
    */
   async edit({ inertia }: HttpContext) {
-    return inertia.render('inventories/edit')
+    return inertia.render('products/edit')
   }
 
   /**
-   * Update an existing inventory into the database.
+   * Update an existing product into the database.
    *
    * @param {HttpContext} context
    * @param {HttpContext['view']} context.view
@@ -61,9 +61,9 @@ export default class InventoriesController {
    * @returns {Promise<void>}
    */
   async update({ inertia, request }: HttpContext) {
-    const data = request.validateUsing(InventoryUpdateValidator)
-    const inventory = await Inventory.findOrFail(request.param('id'))
-    await inventory.merge(data as Partial<Inventory>).save()
+    const data = request.validateUsing(ProductUpdateValidator)
+    const product = await Product.findOrFail(request.param('id'))
+    await product.merge(data as Partial<Product>).save()
     return inertia.render('inventories/index')
   }
 
